@@ -39,7 +39,7 @@ if (!$login) {
 }
 
 // Spécifier le répertoire contenant les documents
-$ftp_directory = "/home/ftpuser1/ftp"; 
+$ftp_directory = "/home/ftpuser/ftp"; 
 // Changer de répertoire
 ftp_chdir($ftp_conn, $ftp_directory);
 
