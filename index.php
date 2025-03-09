@@ -25,7 +25,7 @@ try {
 
 // Récupération du nombre de documents depuis le serveur FTP
 $ftp_server = "192.168.1.18";  
-$ftp_username = "ftpuser1";  
+$ftp_username = "ftpuser";  
 $ftp_password = "passer";  
 // Connexion au serveur FTP
 $ftp_conn = ftp_connect($ftp_server) or die("Impossible de se connecter à $ftp_server");
