@@ -61,122 +61,180 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="utf-8">
     <title>Modifier un employé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
-        /* Styles pour la barre de navigation */
-        .navbar {
-            background-color: #2c3e50;
-            padding: 10px;
+        :root {
+            --primary-color: #2A9D8F;
+            --secondary-color: #264653;
+            --accent-color: #E76F51;
+            --light-bg: #F8F9FA;
+            --dark-text: #2A2A2A;
         }
+
+        body {
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--light-bg);
+            margin: 0;
+            padding: 0;
+        }
+
+        .navbar {
+            background: var(--secondary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+        }
+
         .navbar ul {
             list-style: none;
             margin: 0;
             padding: 0;
             display: flex;
-        }
-        .navbar li {
-            margin-right: 20px;
-        }
-        .navbar a {
-            color: #fff;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        .navbar a:hover {
-            text-decoration: underline;
+            gap: 2rem;
         }
 
-        /* Styles généraux */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f0f2f5;
-            margin: 0;
-            padding: 0;
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
         }
-        h1 {
-            color: #333;
-            margin-bottom: 20px;
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s;
         }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
         .container {
             max-width: 800px;
-            margin: 40px auto;
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
         }
 
-        /* Styles du formulaire */
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
         form {
-            display: flex;
-            flex-direction: column;
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
         }
-        form label {
-            margin-top: 15px;
-            font-weight: bold;
-            color: #555;
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: 500;
         }
-        form input[type="text"],
-        form input[type="email"],
-        form input[type="number"] {
-            padding: 10px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            font-size: 1em;
+
+        input[type="text"],
+        input[type="email"],
+        input[type="number"] {
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
         }
-        form button {
-            margin-top: 20px;
-            padding: 12px;
-            background-color: #1e88e5;
-            color: #fff;
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42,157,143,0.25);
+        }
+
+        button {
+            grid-column: span 2;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
             border: none;
-            border-radius: 4px;
-            font-size: 1em;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
+            transition: all 0.3s ease;
         }
-        form button:hover {
-            background-color: #1565c0;
+
+        button:hover {
+            background: var(--accent-color);
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                grid-column: span 1;
+            }
+            
+            .container {
+                margin: 1rem;
+                padding: 1.5rem;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Barre de navigation inchangée -->
+    <nav class="navbar">
+        <ul>
+            <li><a href="../index.php">Accueil</a></li>
+            <li><a href="../employe/index.php">Employés</a></li>
+            <li><a href="../clients/index.php">Clients</a></li>
+            <li><a href="../documents/index.php">Documents</a></li>
+        </ul>
+    </nav>
 
-<!-- Barre de navigation -->
-<nav class="navbar">
-    <ul>
-        <li><a href="../index.php">Accueil</a></li>
-        <li><a href="../employe/index.php">Employés</a></li>
-        <li><a href="../clients/index.php">Clients</a></li>
-        <li><a href="../documents/index.php">Documents</a></li>
-    </ul>
-</nav>
+    <!-- Contenu principal inchangé -->
+    <div class="container">
+        <h1>Modifier un employé</h1>
+        <form action="update.php?id=<?= $employe['employe_id'] ?>" method="post">
+            <input type="hidden" name="employe_id" value="<?= $employe['employe_id'] ?>">
 
-<div class="container">
-    <h1>Modifier un employé</h1>
-    <form action="update.php?id=<?= $employe['employe_id'] ?>" method="post">
-        <input type="hidden" name="employe_id" value="<?= $employe['employe_id'] ?>">
-
-        <label>Nom :</label>
-        <input type="text" name="nom" value="<?= htmlspecialchars($employe['nom']) ?>" required>
-
-        <label>Prénom :</label>
-        <input type="text" name="prenom" value="<?= htmlspecialchars($employe['prenom']) ?>" required>
-
-        <label>Email :</label>
-        <input type="email" name="email" value="<?= htmlspecialchars($employe['email']) ?>" required>
-
-        <label>Téléphone :</label>
-        <input type="text" name="telephone" value="<?= htmlspecialchars($employe['telephone']) ?>">
-
-        <label>Poste :</label>
-        <input type="text" name="poste" value="<?= htmlspecialchars($employe['poste']) ?>">
-
-        <label>Salaire :</label>
-        <input type="number" step="0.01" name="salaire" value="<?= $employe['salaire'] ?>">
-
-        <button type="submit">Enregistrer</button>
-    </form>
-</div>
-
+            <div>
+                <label>Nom :</label>
+                <input type="text" name="nom" value="<?= htmlspecialchars($employe['nom']) ?>" required>
+            </div>
+            <div>
+                <label>Prénom :</label>
+                <input type="text" name="prenom" value="<?= htmlspecialchars($employe['prenom']) ?>" required>
+            </div>
+            <div>
+                <label>Email :</label>
+                <input type="email" name="email" value="<?= htmlspecialchars($employe['email']) ?>" required>
+            </div>
+            <div>
+                <label>Téléphone :</label>
+                <input type="text" name="telephone" value="<?= htmlspecialchars($employe['telephone']) ?>">
+            </div>
+            <div>
+                <label>Poste :</label>
+                <input type="text" name="poste" value="<?= htmlspecialchars($employe['poste']) ?>">
+            </div>
+            <div>
+                <label>Salaire :</label>
+                <input type="number" step="0.01" name="salaire" value="<?= $employe['salaire'] ?>">
+            </div>
+            <button type="submit">Enregistrer</button>
+        </form>
+    </div>
 </body>
 </html>

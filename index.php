@@ -23,13 +23,34 @@ try {
     // idem
 }
 
-// Récupération du nombre de documents
-try {
-    $stmt = $pdo->query("SELECT COUNT(*) AS count FROM documents");
-    $document_count = $stmt->fetch(PDO::FETCH_ASSOC)['count'];
-} catch (PDOException $e) {
-    // idem
+// Récupération du nombre de documents depuis le serveur FTP
+$ftp_server = "192.168.1.11";  
+$ftp_username = "ftpuser1";  
+$ftp_password = "passer";  
+// Connexion au serveur FTP
+$ftp_conn = ftp_connect($ftp_server) or die("Impossible de se connecter à $ftp_server");
+// Connexion avec les identifiants
+$login = ftp_login($ftp_conn, $ftp_username, $ftp_password);
+
+// Vérifier la connexion
+if (!$login) {
+    echo "Impossible de se connecter au serveur FTP.";
+    exit();
 }
+
+// Spécifier le répertoire contenant les documents
+$ftp_directory = "/home/ftpuser1/ftp"; 
+// Changer de répertoire
+ftp_chdir($ftp_conn, $ftp_directory);
+
+// Récupérer la liste des fichiers dans le répertoire
+$documents = ftp_nlist($ftp_conn, ".");
+
+// Compter le nombre de fichiers
+$document_count = count($documents);
+
+// Fermer la connexion FTP
+ftp_close($ftp_conn);
 ?>
 
 <!DOCTYPE html>
@@ -38,123 +59,166 @@ try {
     <meta charset="UTF-8">
     <title>Accueil - Système de Gestion</title>
     <style>
-        /* --- Styles généraux --- */
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: Arial, sans-serif;
-            background: #f0f0f0;
-        }
-        header {
-            background: #2c3e50;
-            color: #fff;
-            padding: 15px;
-        }
-        header h1 {
-            margin: 0;
-        }
-        .container {
-            width: 90%;
-            max-width: 1000px;
-            margin: 30px auto;
-            background: #fff;
-            padding: 20px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
+  :root {
+    --primary-color: #2A9D8F;
+    --secondary-color: #264653;
+    --accent-color: #E76F51;
+    --light-bg: #F8F9FA;
+    --dark-text: #2A2A2A;
+    --gradient-start: #2A9D8F;
+    --gradient-end: #264653;
+  }
 
-        /* --- Section d'accueil --- */
-        .welcome {
-            text-align: center;
-            margin-bottom: 40px;
-        }
-        .welcome h2 {
-            margin-bottom: 10px;
-        }
-        .welcome p {
-            color: #666;
-        }
+  body {
+    background-color: var(--light-bg);
+    font-family: 'Inter', system-ui, sans-serif;
+    color: var(--dark-text);
+    margin: 0;
+  }
 
-        /* --- Tableau de bord (les cartes) --- */
-        .dashboard {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap; /* pour s'adapter sur petits écrans */
-        }
-        .card {
-            flex: 1 1 250px; /* largeur minimale de 250px */
-            background: #eee;
-            padding: 20px;
-            border-radius: 6px;
-            text-align: center;
-        }
-        .card h3 {
-            margin: 0 0 10px;
-        }
-        .count {
-            font-size: 2em;
-            font-weight: bold;
-            margin: 10px 0;
-            color: #333;
-        }
-        .card a {
-            display: inline-block;
-            margin-top: 10px;
-            padding: 8px 12px;
-            background: #2c3e50;
-            color: #fff;
-            text-decoration: none;
-            border-radius: 4px;
-        }
-        .card a:hover {
-            background: #34495e;
-        }
+  header {
+    background: var(--secondary-color);
+    box-shadow: 0 2px 15px rgba(0,0,0,0.1);
+    padding: 1rem 0;
+  }
 
-        /* --- Actions rapides --- */
-        .actions {
-            margin-top: 40px;
-        }
-        .actions h3 {
-            margin-bottom: 20px;
-            border-bottom: 1px solid #ccc;
-            padding-bottom: 5px;
-        }
-        .actions .action-list {
-            display: flex;
-            gap: 20px;
-            flex-wrap: wrap;
-        }
-        .action-box {
-            flex: 1 1 250px;
-            background: #fafafa;
-            padding: 20px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            text-align: center;
-        }
-        .action-box a {
-            display: inline-block;
-            margin-top: 10px;
-            text-decoration: none;
-            color: #2980b9;
-            font-weight: bold;
-        }
-        .action-box a:hover {
-            color: #1c5980;
-        }
+  .container {
+    max-width: 1200px;
+    margin: 2rem auto;
+    padding: 0 1rem;
+  }
 
-        /* --- Footer --- */
-        footer {
-            margin-top: 30px;
-            text-align: center;
-            color: #777;
-            font-size: 0.9em;
-        }
-    </style>
+  nav {
+    display: flex;
+    gap: 1.5rem;
+    align-items: center;
+  }
+
+  .nav-link {
+    color: white !important;
+    text-decoration: none;
+    position: relative;
+    transition: all 0.3s ease;
+  }
+
+  .nav-link::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent-color);
+    transition: width 0.3s;
+  }
+
+  .nav-link:hover::after {
+    width: 100%;
+  }
+
+  .dashboard {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+    transition: transform 0.3s cubic-bezier(0.4,0,0.2,1);
+  }
+
+  .card:hover {
+    transform: translateY(-5px);
+  }
+
+  .card h3 {
+    color: var(--secondary-color);
+    margin-bottom: 1rem;
+  }
+
+  .count {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--primary-color);
+    margin: 1rem 0;
+  }
+
+  .card a {
+    display: inline-block;
+    padding: 0.8rem 1.5rem;
+    background: var(--primary-color);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    transition: all 0.3s ease;
+  }
+
+  .card a:hover {
+    background: var(--accent-color);
+    transform: translateY(-2px);
+  }
+
+  .actions .action-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .action-box {
+    background: white;
+    padding: 1.5rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  }
+
+  .action-box a {
+    background: var(--primary-color);
+    color: white !important;
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    text-decoration: none;
+  }
+
+  footer {
+    text-align: center;
+    padding: 2rem 0;
+    color: var(--secondary-color);
+    margin-top: 3rem;
+  }
+
+  @media (max-width: 768px) {
+    .container {
+      padding: 0 1rem;
+    }
+    
+    nav {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+  }
+</style>
 </head>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+
 <body>
 
 <header>
     <h1>Système de Gestion</h1>
+    <!-- Barre de navigation -->
+    <nav>
+        <div class="nav-item">
+            <a href="https://mail.smarttech.sn/iredadmin" target="_blank" class="nav-link">iRedAdmin</a>
+            <span class="tooltip">Accédez à l'administration d'iRedMail</span>
+        </div>
+        <div class="nav-item">
+            <a href="https://mail.smarttech.sn/mail" target="_blank" class="nav-link">Boite Mail</a>
+            <span class="tooltip">Accédez à la boîte mail via Roundcube</span>
+        </div>
+    </nav>
 </header>
 
 <div class="container">

@@ -38,125 +38,181 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <head>
     <meta charset="UTF-8">
     <title>Ajouter un Employé</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary-color: #2A9D8F;
+            --secondary-color: #264653;
+            --accent-color: #E76F51;
+            --light-bg: #F8F9FA;
+            --dark-text: #2A2A2A;
+        }
+
         body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f4;
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--light-bg);
             margin: 0;
-            padding: 20px;
+            padding: 0;
         }
-        .container {
-            background: #fff;
-            padding: 20px;
-            border-radius: 5px;
-            max-width: 600px;
-            margin: 40px auto;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+
+        .navbar {
+            background: var(--secondary-color);
+            padding: 1rem;
+            box-shadow: 0 2px 15px rgba(0,0,0,0.1);
         }
-        h1 {
-            margin-top: 0;
-            color: #333;
-        }
-        form {
+
+        .navbar ul {
+            list-style: none;
+            margin: 0;
+            padding: 0;
             display: flex;
-            flex-direction: column;
+            gap: 2rem;
         }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .navbar a::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 0;
+            width: 0;
+            height: 2px;
+            background: var(--accent-color);
+            transition: width 0.3s;
+        }
+
+        .navbar a:hover::after {
+            width: 100%;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            margin-bottom: 2rem;
+            font-weight: 600;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1.5rem;
+        }
+
         label {
-            margin-top: 10px;
-            font-weight: bold;
-            color: #555;
+            display: block;
+            margin-bottom: 0.5rem;
+            color: var(--secondary-color);
+            font-weight: 500;
         }
+
         input[type="text"],
         input[type="email"],
         input[type="number"] {
-            padding: 8px;
-            margin-top: 5px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
+            width: 100%;
+            padding: 0.8rem;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            transition: border-color 0.3s ease;
         }
+
+        input:focus {
+            border-color: var(--primary-color);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(42,157,143,0.25);
+        }
+
         button {
-            margin-top: 20px;
-            padding: 10px 15px;
-            background: #1e88e5;
-            color: #fff;
+            grid-column: span 2;
+            padding: 1rem;
+            background: var(--primary-color);
+            color: white;
             border: none;
-            border-radius: 4px;
+            border-radius: 8px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 1rem;
+            transition: all 0.3s ease;
         }
+
         button:hover {
-            background: #1565c0;
+            background: var(--accent-color);
+            transform: translateY(-2px);
         }
-        /* Pour un peu de réactivité sur mobiles */
-        @media (max-width: 600px) {
+
+        @media (max-width: 768px) {
+            form {
+                grid-template-columns: 1fr;
+            }
+            
+            button {
+                grid-column: span 1;
+            }
+            
             .container {
-                margin: 20px;
-                padding: 15px;
+                margin: 1rem;
+                padding: 1.5rem;
             }
         }
     </style>
 </head>
 <body>
-<!-- Début de la barre de navigation -->
-<nav class="navbar">
-    <ul>
-        <li><a href="../index.php">Accueil</a></li>
-        <li><a href="../employe/index.php">Employés</a></li>
-        <li><a href="../clients/index.php">Clients</a></li>
-        <li><a href="../documents/index.php">Documents</a></li>
-    </ul>
-</nav>
+    <!-- Barre de navigation inchangée -->
+    <nav class="navbar">
+        <ul>
+            <li><a href="../index.php">Accueil</a></li>
+            <li><a href="../employe/index.php">Employés</a></li>
+            <li><a href="../clients/index.php">Clients</a></li>
+            <li><a href="../documents/index.php">Documents</a></li>
+        </ul>
+    </nav>
 
-<style>
-    .navbar {
-        background-color: #2c3e50;
-        padding: 10px;
-    }
-    .navbar ul {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: flex;
-    }
-    .navbar li {
-        margin-right: 20px;
-    }
-    .navbar a {
-        color: #fff;
-        text-decoration: none;
-        font-weight: bold;
-    }
-    .navbar a:hover {
-        text-decoration: underline;
-    }
-</style>
-<!-- Fin de la barre de navigation -->
-<div class="container">
-    <h1>Ajouter un Employé</h1>
-    <form action="create.php" method="post">
-        <label>Nom :</label>
-        <input type="text" name="nom" required>
-
-        <label>Prénom :</label>
-        <input type="text" name="prenom" required>
-
-        <label>Email :</label>
-        <input type="email" name="email" required>
-
-        <label>Téléphone :</label>
-        <input type="text" name="telephone">
-
-        <label>Poste :</label>
-        <input type="text" name="poste">
-
-        <label>Salaire :</label>
-        <input type="number" step="0.01" name="salaire">
-
-        <button type="submit">Ajouter</button>
-    </form>
-</div>
+    <!-- Contenu principal inchangé -->
+    <div class="container">
+        <h1>Ajouter un Employé</h1>
+        <form action="create.php" method="post">
+            
+            <div>
+                <label>Nom :</label>
+                <input type="text" name="nom" required>
+            </div>
+            <div>
+                <label>Prénom :</label>
+                <input type="text" name="prenom" required>
+            </div>
+            <div>
+                <label>Email :</label>
+                <input type="email" name="email" required>
+            </div>
+            <div>
+                <label>Téléphone :</label>
+                <input type="text" name="telephone">
+            </div>
+            <div>
+                <label>Poste :</label>
+                <input type="text" name="poste">
+            </div>
+            <div>
+                <label>Salaire :</label>
+                <input type="number" step="0.01" name="salaire">
+            </div>
+            <button type="submit">Ajouter</button>
+        </form>
+    </div>
 </body>
 </html>
-
 
 
