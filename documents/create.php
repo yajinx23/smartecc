@@ -6,10 +6,10 @@ $message = "";
 $uploadDir = '../uploads/'; // Ce dossier ne sera plus utilisé pour stocker les fichiers
 
 // Paramètres FTP
-$ftp_server = "192.168.1.11";
-$ftp_user = "ftpuser1";
+$ftp_server = "192.168.1.18";
+$ftp_user = "ftpuser";
 $ftp_password = "passer";
-$ftp_upload_dir = "/home/ftpuser1/ftp/"; // Répertoire distant où stocker les fichiers
+$ftp_upload_dir = "/home/ftpuser/ftp/"; // Répertoire distant où stocker les fichiers
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Vérification de l'upload du fichier
